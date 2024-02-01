@@ -5,6 +5,8 @@ require('dotenv').config();
 
 const app = express();
 
+// taking the data from 'dist production build by frontend'
+app.use(express.static('dist'))
 app.use(cors());
 // express.json() used to get body of any req
 app.use(express.json());
@@ -107,3 +109,14 @@ const PORT = 4000 || process.env.PORT;
 app.listen(PORT, ()=>{
     console.log(`server is listening at PORT ${PORT}`);
 })
+
+
+// when we doing with dist network gets HTML page and assets from dist
+// React code fetches the data from baseURL or https://localhost:4000/api/data
+// Unlike when running the app in a development environment, everything is now in 
+/*
+    the same node/express-backend that runs in localhost:4000. When the browser goes 
+    to the page, the file index.html is rendered. That causes the browser to fetch the 
+    production version of the React app. Once it starts to run, it fetches the json-data 
+    from the address localhost:3001/api/notes.
+*/
