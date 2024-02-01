@@ -120,3 +120,4 @@ app.listen(PORT, ()=>{
     production version of the React app. Once it starts to run, it fetches the json-data 
     from the address localhost:3001/api/notes.
 */
+//Our application saves the notes to a variable. If the application crashes or is restarted, all of the data will disappear.
