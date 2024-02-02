@@ -10,3 +10,12 @@ The script npm run build:ui builds the frontend and copies the production versio
   }
 }
 ```
+
+
+# MongoDB
+We could use the database directly from our JavaScript code with the official MongoDB Node.js driver library, but it is quite cumbersome to use. We will instead use the Mongoose library that offers a higher-level API.
+
+Mongoose could be described as an object document mapper (ODM), and saving JavaScript objects as Mongo documents is straightforward with this library.
+
+Let's install Mongoose in our notes project backend:
+

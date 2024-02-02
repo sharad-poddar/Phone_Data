@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
+const PhoneModel = require('./02_mongo.js');
 require('dotenv').config();
 
 const app = express();
@@ -45,7 +46,9 @@ app.get('/info', (req, res)=>{
 
 // data comes in json format
 app.get('/api/data',(req, res)=>{
-    res.json(data);
+    PhoneModel.find({}).then(data=>{
+        res.json(data)
+    })
 })
 
 // data sending on specific id
