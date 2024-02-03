@@ -24,3 +24,10 @@ Let's install Mongoose in our notes project backend:
 # git commands
 git rm .env --cached
 git commit -m "Stopped tracking .env File"
+
+# error manager middleware
+The error that is passed forward is given to the next function as a parameter. If next was called without a parameter, then the execution would simply move onto the next route or middleware. If the next function is called with a parameter, then the execution will continue to the error handler middleware. 
+
+# order of middleware
+it is necessary to maintina the order of middlewares
+

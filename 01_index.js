@@ -108,11 +108,33 @@ app.post('/api/data',(req, res)=>{
 
 
 // DELETE the any specific id 
-app.delete('/api/data/:id',(req, res)=>{
+app.delete('/api/data/:id',(req, res, next)=>{
     const id = req.params.id;
-    const newData = data.filter(e=>id != e.id);
-    console.log(newData);
-    res.send('<p>deleted</p>')
+
+    PhoneModel.findByIdAndDelete(id).then(result=>{
+        console.log(result);
+        console.log('node has been deleted!')
+        res.status(204).end()
+    }).catch(error => next(error));
+})
+
+// Update any phone number
+app.put('/api/data/:id',(req, res, next)=>{
+    const body = req.body;
+
+    const data = {
+        id: body.id,
+        name: body.name,
+        phone: body.phone
+    }
+
+    // the event handler receives the original document without the modifications. 
+    // We added the optional { new: true } parameter, which will cause our event 
+    // handler to be called with the new modified document instead of the original.
+    PhoneModel.findByIdAndUpdate(req.params.id, data, {new: true}).then((result)=>{
+        console.log(result);
+        res.json(result);
+    }).catch(error=>next(error))
 })
 
 
