@@ -55,11 +55,26 @@ app.get('/api/data',(req, res)=>{
 
 
 // data sending on specific id
-app.get('/api/data/:id',(req, res)=>{
+app.get('/api/data/:id',(req, res, next)=>{
     const id = req.params.id;
 
     PhoneModel.findById(id).then(result=>{
-        res.json(result);
+        if(result == null){
+            // sending with status code 404
+            res.status(404).json('Not Found')
+        }else{
+            res.send(result);
+        }
+    })
+    .catch((error)=>{
+        // console.log(error);
+        // sending res with status of 500 and not showing anything
+        //res.status(500).end()
+        // 400 status code for bad requests
+        // res.status(400).json({error: "malfunctionated Id"});
+
+        // passing the error to middleware
+        next(error);
     })
 })
 
@@ -104,6 +119,16 @@ app.delete('/api/data/:id',(req, res)=>{
 // user defined middleware
 app.use((req, res)=>{
     res.status(404).json({"error": "unknown content"});
+})
+
+// middleware to handel all errors
+app.use((error, req, res, next)=>{
+    console.log(error);
+    console.log(error.message);
+    if (error.name === 'CastError') {
+        return res.status(400).send({ error: 'malformatted id' })
+    }
+    next(error);
 })
 
 
