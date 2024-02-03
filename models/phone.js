@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
-
-const password = process.argv[2];
+require('dotenv').config();
 
 mongoose.set('strictQuery', false);
-const url = `mongodb+srv://sharad:${password}@cluster0.at9thxi.mongodb.net/contact_details?retryWrites=true&w=majority`
+const url = process.env.API_URL
 
 console.log('conncting to url', url);
 mongoose.connect(url).then(result => {
@@ -15,7 +14,7 @@ mongoose.connect(url).then(result => {
 const schema = new mongoose.Schema({
     id: Number,
     name: String,
-    number: Number,
+    phone: Number,
 })
   
 // setting the schema to json

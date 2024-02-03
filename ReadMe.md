@@ -19,3 +19,8 @@ Mongoose could be described as an object document mapper (ODM), and saving JavaS
 
 Let's install Mongoose in our notes project backend:
 
+
+
+# git commands
+git rm .env --cached
+git commit -m "Stopped tracking .env File"

@@ -1,7 +1,9 @@
 const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
-const PhoneModel = require('./02_mongo.js');
+// const PhoneModel = require('./02_mongo.js');
+const PhoneModel = require('./models/phone.js');
+
 require('dotenv').config();
 
 const app = express();
@@ -51,22 +53,16 @@ app.get('/api/data',(req, res)=>{
     })
 })
 
+
 // data sending on specific id
 app.get('/api/data/:id',(req, res)=>{
     const id = req.params.id;
 
-    if(data.length == 0){
-        res.send('<p>No data is available currently!</p>')
-    }
-
-    const content = data.find(e=>e.id == id);
-
-    if(!content){
-        res.status(404).end();
-    }else{
-        res.json(content);
-    }
+    PhoneModel.findById(id).then(result=>{
+        res.json(result);
+    })
 })
+
 
 // POST the data to server
 app.post('/api/data',(req, res)=>{
@@ -82,16 +78,19 @@ app.post('/api/data',(req, res)=>{
         </div>`);
     }
 
-    const phone_data = {
+    const phone_data = new PhoneModel({
         id: data.length+1,
         name: req.body.name,
         phone: req.body.phone
-    }
+    })
 
-    data.push(phone_data);
-    console.log(data);
-    res.status(200).json(data);
+    phone_data.save().then(result=>{
+        console.log(result, "saved to backened");
+        // the data send back to frontend with toJson format
+        res.json(result);
+    })
 })
+
 
 // DELETE the any specific id 
 app.delete('/api/data/:id',(req, res)=>{
