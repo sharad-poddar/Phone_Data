@@ -80,10 +80,11 @@ app.get('/api/data/:id',(req, res, next)=>{
 
 
 // POST the data to server
-app.post('/api/data',(req, res)=>{
-    if(!req.body.name || !req.body.phone || req.body.name==''){
-        return res.status(400).end();
-    }
+app.post('/api/data',(req, res, next)=>{
+    // Handeld in moongoose Validator
+    // if(!req.body.name || !req.body.phone || req.body.name==''){
+    //     return res.status(400).end();
+    // }
 
     const same_name_data = data.find(e=>e.name == req.body.name);
     if(same_name_data){
@@ -103,7 +104,7 @@ app.post('/api/data',(req, res)=>{
         console.log(result, "saved to backened");
         // the data send back to frontend with toJson format
         res.json(result);
-    })
+    }).catch(error => next(error));
 })
 
 
@@ -131,7 +132,7 @@ app.put('/api/data/:id',(req, res, next)=>{
     // the event handler receives the original document without the modifications. 
     // We added the optional { new: true } parameter, which will cause our event 
     // handler to be called with the new modified document instead of the original.
-    PhoneModel.findByIdAndUpdate(req.params.id, data, {new: true}).then((result)=>{
+    PhoneModel.findByIdAndUpdate(req.params.id, data, {new: true, runValidators: true, context: 'query'}).then((result)=>{
         console.log(result);
         res.json(result);
     }).catch(error=>next(error))
@@ -149,6 +150,9 @@ app.use((error, req, res, next)=>{
     console.log(error.message);
     if (error.name === 'CastError') {
         return res.status(400).send({ error: 'malformatted id' })
+    }
+    if(error.name === 'ValidationError'){
+        return response.status(400).json({ error: error.message })
     }
     next(error);
 })
