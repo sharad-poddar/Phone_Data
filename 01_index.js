@@ -1,19 +1,19 @@
 const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
-// const PhoneModel = require('./02_mongo.js');
-const PhoneModel = require('./models/phone.js');
+// const PhoneModel = require('./02_mongo.js')
+const PhoneModel = require('./models/phone.js')
 
-require('dotenv').config();
+require('dotenv').config()
 
-const app = express();
+const app = express()
 
 // taking the data from 'dist production build by frontend'
 app.use(express.static('dist'))
-app.use(cors());
+app.use(cors())
 // express.json() used to get body of any req
-app.use(express.json());
-app.use(morgan('tiny'));
+app.use(express.json())
+app.use(morgan('tiny'))
 
 const data = [
     {
@@ -33,7 +33,7 @@ const data = [
 
 // Data was tranfered in form of string
 app.get('/',(req, res)=>{
-    res.send('<p>welcome to Phone Diary</p>');
+    res.send('<p>welcome to Phone Diary</p>')
 })
 
 app.get('/info', (req, res)=>{
@@ -56,26 +56,26 @@ app.get('/api/data',(req, res)=>{
 
 // data sending on specific id
 app.get('/api/data/:id',(req, res, next)=>{
-    const id = req.params.id;
+    const id = req.params.id
 
     PhoneModel.findById(id).then(result=>{
         if(result == null){
             // sending with status code 404
             res.status(404).json('Not Found')
         }else{
-            res.send(result);
+            res.send(result)
         }
     })
-    .catch((error)=>{
-        // console.log(error);
-        // sending res with status of 500 and not showing anything
-        //res.status(500).end()
-        // 400 status code for bad requests
-        // res.status(400).json({error: "malfunctionated Id"});
+        .catch((error)=>{
+            // console.log(error);
+            // sending res with status of 500 and not showing anything
+            //res.status(500).end()
+            // 400 status code for bad requests
+            // res.status(400).json({error: "malfunctionated Id"});
 
-        // passing the error to middleware
-        next(error);
-    })
+            // passing the error to middleware
+            next(error)
+        })
 })
 
 
@@ -86,12 +86,12 @@ app.post('/api/data',(req, res, next)=>{
     //     return res.status(400).end();
     // }
 
-    const same_name_data = data.find(e=>e.name == req.body.name);
+    const same_name_data = data.find(e=>e.name == req.body.name)
     if(same_name_data){
         return res.status(400).send(`<div>
             <h2>Error</h2>    
             <p>please add some unique name<p>
-        </div>`);
+        </div>`)
     }
 
     const phone_data = new PhoneModel({
@@ -101,27 +101,27 @@ app.post('/api/data',(req, res, next)=>{
     })
 
     phone_data.save().then(result=>{
-        console.log(result, "saved to backened");
+        console.log(result, 'saved to backened')
         // the data send back to frontend with toJson format
-        res.json(result);
-    }).catch(error => next(error));
+        res.json(result)
+    }).catch(error => next(error))
 })
 
 
 // DELETE the any specific id 
 app.delete('/api/data/:id',(req, res, next)=>{
-    const id = req.params.id;
+    const id = req.params.id
 
     PhoneModel.findByIdAndDelete(id).then(result=>{
-        console.log(result);
+        console.log(result)
         console.log('node has been deleted!')
         res.status(204).end()
-    }).catch(error => next(error));
+    }).catch(error => next(error))
 })
 
 // Update any phone number
 app.put('/api/data/:id',(req, res, next)=>{
-    const body = req.body;
+    const body = req.body
 
     const data = {
         id: body.id,
@@ -133,34 +133,34 @@ app.put('/api/data/:id',(req, res, next)=>{
     // We added the optional { new: true } parameter, which will cause our event 
     // handler to be called with the new modified document instead of the original.
     PhoneModel.findByIdAndUpdate(req.params.id, data, {new: true, runValidators: true, context: 'query'}).then((result)=>{
-        console.log(result);
-        res.json(result);
+        console.log(result)
+        res.json(result)
     }).catch(error=>next(error))
 })
 
 
 // user defined middleware
 app.use((req, res)=>{
-    res.status(404).json({"error": "unknown content"});
+    res.status(404).json({'error': 'unknown content'})
 })
 
 // middleware to handel all errors
 app.use((error, req, res, next)=>{
-    console.log(error);
-    console.log(error.message);
+    console.log(error)
+    console.log(error.message)
     if (error.name === 'CastError') {
         return res.status(400).send({ error: 'malformatted id' })
     }
     if(error.name === 'ValidationError'){
-        return response.status(400).json({ error: error.message })
+        return res.status(400).json({ error: error.message })
     }
-    next(error);
+    next(error)
 })
 
 
-const PORT = 4000 || process.env.PORT;
+const PORT = 4000 || process.env.PORT
 app.listen(PORT, ()=>{
-    console.log(`server is listening at PORT ${PORT}`);
+    console.log(`server is listening at PORT ${PORT}`)
 })
 
 
